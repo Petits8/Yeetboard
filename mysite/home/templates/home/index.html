@@ -1,0 +1,70 @@
+{% extends "home/base.html" %}
+
+{% block title %}
+Home
+{% endblock %}
+
+{% block content %}
+
+{% if user.is_authenticated %}
+
+{% endif %}
+
+<div id="PostsWrapper" style="width: 90%; margin-left: auto; margin-right: auto;"></div>
+
+{% endblock %}
+
+{% block scripts %}
+  <script>
+      $.ajax({
+    url: "/getposts",
+    type: "get", //send it through get method
+    success: function(response) {
+      var PostList = JSON.parse(response);
+
+      for(var i=0; i<PostList.length; i++){
+        var Post = PostList[i];
+        var PostElement = document.createElement('div');
+        PostElement.className += "post-element";
+
+        var Title = Post['title'];
+        var Author = Post['author'];
+        var TimeStamp = Post['timestamp'];
+        var Content = Post['content'];
+        var isNsfw = Post['isNsfw'];
+        var isSpoiler = Post['isSpoiler'];
+
+
+        PostElement.innerHTML += "<h5 style='margin-bottom: 5px;'>{0}".formatUnicorn(Title);
+
+        /*if(isNsfw || isSpoiler){
+          PostElement.innerHTML += "<br />"
+        }*/
+
+        if(isNsfw){
+          PostElement.innerHTML += "<span class='red-warning-button' style='font-size: 12px;'>NSFW</span>&nbsp;";
+        }
+        if(isSpoiler){
+          PostElement.innerHTML += "<span class='grey-warning-button' style='font-size: 12px;'>Spoiler</span>";
+        }
+
+        PostElement.innerHTML += `</h5><br />
+         <small class="text-muted">Submitted {0} UTC by <a href="/u/{1}">{2}</a></small>
+
+          <div class='card' style='width: 100%;'><div class='card-body'>
+               <p class="card-text">{3}</p>
+             </div>
+           </div>`.formatUnicorn(TimeStamp.split('.')[0], Author, Author, Content);
+
+        _("PostsWrapper").appendChild(PostElement);
+
+
+      }
+
+    },
+    error: function(xhr) {
+      console.log(xhr)
+    }
+    });
+  </script>
+{% endblock %}

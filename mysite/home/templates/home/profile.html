@@ -1,0 +1,25 @@
+{%extends "home/base.html"%}
+
+{% block title %}
+  {% if user.is_authenticated and user.username == uname %}
+    Your Profile
+  {% elif uname %}
+    {{uname}}'s Profile
+  {% else %}
+    User Not Found
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+
+  {% if info %}
+    {{info}}
+  {% endif %}
+
+  {% if user.is_authenticated and user.username == uname %}
+    {% if user.profile.email == "" %}
+        <a href="/changeemail" class="badge badge-primary">Add Email</a>
+    {% endif %}
+  {% endif %}
+
+{% endblock %}

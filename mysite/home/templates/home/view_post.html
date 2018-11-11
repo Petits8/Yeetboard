@@ -1,0 +1,28 @@
+{% extends "home/base.html" %}
+
+{% block title %}
+  {% if validPost and postObject %}
+    {{postObject.title}}
+  {% else %}
+    Invalid Post
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  {% if validPost and postObject %}
+  <h5>{{postObject.title}}<br />
+    {% if postObject.isNsfw %}
+      <span class="red-warning-button" style="font-size: 12px;">NSFW</span>
+    {% endif %}
+    {% if postObject.isSpoiler %}
+      <span class="grey-warning-button" style="font-size: 12px;">Spoiler</span>
+    {% endif %}
+   </h5>
+  <small class="text-muted">Submitted {{postObject.timestamp}} UTC by <a href="/u/{{postObject.author}}">{{postObject.author}}</a></small>
+    <div class="card" style="width: 100%;">
+      <div class="card-body">
+        <p class="card-text">{{postObject.content}}</p>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "home/base.html" %}
+
+{% block title %}
+  {{type}}
+{% endblock %}
+
+{% block content %}
+  <h2>{{type}}: {{message}}</h2><br />
+  {% if additional_message %}
+    <p>{{additional_message}}</p><br />
+  {% endif %}
+  <p>Redirecting you to homepage in 5 seconds</p>
+{% endblock %}
+
+{% block scripts %}
+  <script type="text/javascript">
+    setTimeout(function() { window.location = "/" }, 5000);
+  </script>
+{% endblock %}

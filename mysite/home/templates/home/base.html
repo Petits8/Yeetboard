@@ -1,0 +1,193 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang='en'>
+  <head>
+    <meta charset="utf-8">
+    <title>
+      YEET -
+      {% block title %}
+      {% endblock %}
+    </title>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+    <script>
+      function _(x){
+        return document.getElementById(x)
+      }
+      String.prototype.formatUnicorn = String.prototype.formatUnicorn ||
+      function () {
+          "use strict";
+          var str = this.toString();
+          if (arguments.length) {
+              var t = typeof arguments[0];
+              var key;
+              var args = ("string" === t || "number" === t) ?
+                  Array.prototype.slice.call(arguments)
+                  : arguments[0];
+
+              for (key in args) {
+                  str = str.replace(new RegExp("\\{" + key + "\\}", "gi"), args[key]);
+              }
+          }
+
+          return str;
+      };
+    </script>
+
+    <style>
+      .form-group{
+        width: 300px;
+        /*float: left;*/
+      }
+
+      body{
+        background-color: #f4f4f4;
+         background-attachment: fixed;
+      }
+
+      #contentBlock{
+        background-color: #FFF;
+        min-height: 800px;
+        padding: 40px;
+        padding-top: 40px;
+        padding-bottom: 40px;
+      }
+
+      .UserForm{
+
+        margin-left: 50px;
+      }
+      #AlertContainer{
+        margin-top: 10px;
+      }
+      #navbar {
+        position: static;
+      }
+        /*.alert{
+        position: fixed;
+        margin-left: auto;
+        margin-right: auto;
+      }*/
+
+      .red-warning-button{
+        padding-left: 3px;
+        padding-right: 3px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        background-color: red;
+        color: #FFF;
+        border-radius: 2px;
+
+      }
+      .grey-warning-button{
+        padding-left: 3px;
+        padding-right: 3px;
+        padding-top: 1px;
+        padding-bottom: 1px;
+        background-color: #b0b0b2;
+        color: #FFF;
+        border-radius: 2px;
+
+      }
+
+      .post-element{
+        border-width: 1px;
+        border-style: solid;
+        border-color: #b0b0b2;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        padding: 15px;
+      }
+
+    </style>
+
+    {% block head %}
+    {% endblock %}
+
+  </head>
+  <body>
+  <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar">
+      <a class="navbar-brand" href="/">YEETBOARD</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home <span class="sr-only">(current)</span></a>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="/u">Profile</a>
+          </li>
+          {% endif %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'post_submit' %}">Submit Post</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Other
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="#">Report Problem</a>
+              <a class="dropdown-item" href="#">Message Mods</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/settings">Settings</a>
+            </div>
+          </li>
+
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="/signout">Sign Out</a>
+              </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link" href="/signin">Sign In</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register">Register</a>
+            </li>
+            {% endif %}
+
+
+        </ul>
+        <form class="form-inline my-2 my-lg-0">
+          <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-light" type="submit">Search</button>
+        </form>
+      </div>
+    </nav>
+    <div id="AlertContainer">
+      {% if user.is_authenticated and user.profile.email == "" %}
+      <div class="alert alert-warning" role="alert">
+        Email Required for All Features. <a href="{% url 'change_email' %}">Add Email.</a>
+      </div>
+
+      {% elif user.is_authenticated and user.profile.email != "" and user.profile.isActivated is False %}
+      <div class="alert alert-warning" role="alert">
+        Please Activate Email to Unlock All Features. <a href="{% url 'change_email' %}">Change Email</a> / <a href="#">Resend Verification</a>
+      </div>
+      {% endif %}
+
+    </div>
+    <div id="contentBlock" style="width: 1000px; margin-left: auto; margin-right: auto; margin-top: 35px;">
+
+
+
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+
+  {% block scripts %}
+  {% endblock %}
+
+  </body>
+</html>
