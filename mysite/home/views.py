@@ -87,15 +87,19 @@ def register(request):
 
 def profile(request, user_name=""):
     args = {}
+    args['isUser'] = True
     if(user_name != "" and user_name != ""):
         query = User.objects.filter(username=user_name)
         if(len(query) == 1):
             args["uname"] = query[0].username
+            args["bio"] = query[0].profile.bio;
         else:
-            args["info"] = "User Not Found :("
+            args["uname"] = "User Not Found :("
+            args["isUser"] = False
 
     elif(request.user.is_authenticated):
         args["uname"] = request.user.username
+        args["bio"] = request.user.profile.bio
     else:
         return redirect("/")
 

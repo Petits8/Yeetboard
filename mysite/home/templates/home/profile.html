@@ -12,8 +12,35 @@
 
 {% block content %}
 
-  {% if info %}
-    {{info}}
+  {% if isUser %}
+  <div id="UserBanner" style="width: 100%; height: 270px; background-color: grey; margin-bottom: 50px; border-radius: 5px;"></div>
+  <div class="card" style="width: 286px;">
+    <!--<img class="card-img-top" src=".../100px180/" alt="Card image cap">-->
+    <div class="card-img-top" id="ProfileImageWrapper" onmouseover="ProfileImageHover(true);" onmouseout="ProfileImageHover(false);">
+
+      <div id="ProfileImage">
+        <div class="InlineMessage" style="opacity: 0.0">Edit Profile Picture</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">{{uname}}</h5>
+
+      {% if bio != "" %}
+      <p class="card-text">{{bio}}</p>
+      {% elif bio == "" %}
+      <p class="card-text">Empty</p>
+      {% endif %}
+      {% if user.username != uname %}
+        <a href="#" class="btn btn-primary">Follow</a>
+      {% endif %}
+    </div>
+    <div class="card-footer">
+      <small class="text-muted">Last updated 3 mins ago</small>
+    </div>
+  </div>
+
+  {% else %}
+    User Not Found :(
   {% endif %}
 
   {% if user.is_authenticated and user.username == uname %}
@@ -22,4 +49,26 @@
     {% endif %}
   {% endif %}
 
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    function ProfileImageHover(x){
+      if ({% if user.is_authenticated and user.username == uname %}
+      true
+      {% else %}
+      false
+      {% endif %}){
+
+        if(x){
+          _("ProfileImage").style = "cursor: pointer; filter: brightness(90%);";
+          _("ProfileImage").getElementsByClassName("InlineMessage")[0].style = "opacity: 1.0";
+          //continue;
+        } else{
+          _("ProfileImage").style = "";
+          _("ProfileImage").getElementsByClassName("InlineMessage")[0].style = "opacity: 0.0";
+        }
+      }
+    }
+  </script>
 {% endblock %}
